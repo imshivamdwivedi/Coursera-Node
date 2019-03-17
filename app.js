@@ -12,11 +12,13 @@ var config = require('./config');
 
 
 
+
 var indexRouter = require('./routes/index');
 var usersRouter  = require('./routes/users')
 var dishRouter = require('./routes/dishRouter');
 var leaderRouter = require('./routes/leaderRouter');
 var promoRouter = require('./routes/promoRouter');
+const uploadRouter = require('./routes/uploadRouter');
 
 const mongoose = require('mongoose');
 
@@ -51,6 +53,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 //app.use(cookieParser('12345-67890-09876-54321'));
+app.use('/imageUpload',uploadRouter);
 
 app.use(session({
   name: 'session-id',
