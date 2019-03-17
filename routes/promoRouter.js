@@ -1,5 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+
+const Promos = require('../models/promos');
+var authenticate = require('../authenticate');
+
 
 const promoRouter = express.Router();
 
@@ -15,7 +20,7 @@ promoRouter.route('/')
      },(err) => next(err))
      .catch((err) => next(err));
   })
-  .post((req,res,next) => {
+  .post(authenticate.verifyUser, authenticate.verifyAdmin,(req,res,next) => {
     Promos.create(req.body)
       .then((promo) => {
         console.log('Promo Created' + promo);
@@ -25,11 +30,11 @@ promoRouter.route('/')
      }, (err) => next(err))
   .catch((err) => next(err));
   })
-  .put((req,res,next) => {
+  .put(authenticate.verifyUser, authenticate.verifyAdmin,(req,res,next) => {
       res.statusCode = 403;
       res.end('PUT opertion is not Supported on /promos');
   })
-  .delete((req,res,next) => {
+  .delete(authenticate.verifyUser, authenticate.verifyAdmin,(req,res,next) => {
     Promos.remove({})
       .then((resp) => {
        res.statusCode = 200;
@@ -48,11 +53,11 @@ promoRouter.route('/')
       }, (err) => next(err))
       .catch((err) => next(err))
   })
-  .post((req,res,next) => {
+  .post(authenticate.verifyUser, authenticate.verifyAdmin,(req,res,next) => {
       res.statusCode = 403;
       res.end('POST operation not Supported on /promos/' + req.params.promoId);
   })
-  .put((req,res,next) => {
+  .put(authenticate.verifyUser, authenticate.verifyAdmin,(req,res,next) => {
       leaders.findByIdAndUpdate(req.params.promoId, {
           $set: req.body
       }, { new: true })
@@ -63,7 +68,7 @@ promoRouter.route('/')
       }, (err) => next(err))
       .catch((err) => next(err));
   })
-  .delete((req,res,next) => {
+  .delete(authenticate.verifyUser, authenticate.verifyAdmin,(req,res,next) => {
       Promos.findByIdAndRemove(req.params.promoId)
       .then((resp) => {
           res.statusCode = 200;
@@ -75,7 +80,7 @@ promoRouter.route('/')
   promoRouter.route('/:promoId/comments')
   .get((req,res,next) => {
     Leaders.findById(req.params.promoId)
-     .then((promos) => {
+     .then((promo) => {
          if(promo != null) {
             res.statusCode = 200;
             res.setHeader('Content-Type' , 'application/json');
@@ -89,7 +94,7 @@ promoRouter.route('/')
      },(err) => next(err))
      .catch((err) => next(err));
   })
-  .post((req, res, next) => {
+  .post(authenticate.verifyUser, authenticate.verifyAdmin,(req, res, next) => {
     Promos.findById(req.params.promoId)
       .then((promo) => {
           if (promo != null) {
@@ -109,12 +114,12 @@ promoRouter.route('/')
       }, (err) => next(err))
       .catch((err) => next(err));
   })
-  .put((req,res,next) => {
+  .put(authenticate.verifyUser, authenticate.verifyAdmin,(req,res,next) => {
       res.statusCode = 403;
       res.end('PUT operation not supported on /promotions/'
           + req.params.promoId + '/comments');
   })
-  .delete((req,res,next) => {
+  .delete(authenticate.verifyUser ,((req,res,next) => {
     Promos.findById(req.params.promoId)
       .then((promo) => {
           if (promo != null) {
@@ -137,10 +142,11 @@ promoRouter.route('/')
       .catch((err) => next(err));    
      
   })
+  ) 
   promoRouter.route('/:promoId/comments/:commentId')
   .get((req,res,next) => {
       Promos.findById(req.params.promoId)
-      .then((leader) => {
+      .then((promo) => {
           if (promo != null && promo.comments.id(req.params.commentId) != null) {
               res.statusCode = 200;
               res.setHeader('Content-Type', 'application/json');
@@ -159,11 +165,11 @@ promoRouter.route('/')
       }, (err) => next(err))
       .catch((err) => next(err));
   })
-  .post((req,res,next) => {
+  .post(authenticate.verifyUser ,(req,res,next) => {
       res.statusCode = 403;
       res.end('POST operation not Supported on /promotions/' + req.params.promoId + '/comments/ ' + req.params.commentId);
   })
-  .put((req,res,next) => {
+  .put(authenticate.verifyUser ,(req,res,next) => {
       Promos.findById(req.params.promoId)
       .then((promo) => {
           if (promo!= null && promo.comments.id(req.params.commentId) != null) {
@@ -193,7 +199,7 @@ promoRouter.route('/')
       }, (err) => next(err))
       .catch((err) => next(err));
   })
-  .delete((req,res,next) => {
+  .delete(authenticate.verifyUser ,(req,res,next) => {
       Promos.findById(req.params.promoId)
       .then((promo) => {
           if (promo != null && promo.comments.id(req.params.commentId) != null) {
