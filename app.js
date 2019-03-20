@@ -9,6 +9,7 @@ var FileStore = require('session-file-store')(session);
 var passport = require('passport');
 var authenticate = require('./authenticate');
 var config = require('./config');
+const cors = require('./routes/cors');
 
 
 
